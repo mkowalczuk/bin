@@ -1,0 +1,2 @@
+#!/bin/sh
+cat $* | col -b | vim -c 'set ft=man' -c 'set nomod' -

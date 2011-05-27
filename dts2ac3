@@ -1,0 +1,21 @@
+#!/bin/sh 
+
+NAME=$(basename ${1%.*}) 
+DTSFILE="$NAME.audio.dts" 
+WAVFILE="$NAME.audio.wav" 
+AC3FILE="$NAME.audio.ac3" 
+MKVFILE="$NAME.ac3.mkv" 
+
+DTSTRACK=$(mkvmerge -i "$1" | grep audio | cut -d: -f1 | cut -d" " -f3) 
+
+mkvextract tracks "$1" $DTSTRACK:"$DTSFILE" 
+
+#mplayer -channels 6 -quiet -vo null -vc null -ao pcm:waveheader:file="$WAVFILE" "$DTSFILE"
+
+#aften "$DTSFILE" "$AC3FILE" 
+
+ffmpeg -i $DTSFILE -ac 2 -ab 192 -ar 48000 $AC3FILE
+
+mkvmerge -o "$MKVFILE" -A "$1" "$AC3FILE" 
+
+rm "$DTSFILE" "$AC3FILE"
